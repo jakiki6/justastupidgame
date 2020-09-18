@@ -7,7 +7,9 @@ class World(object):
     def tick(self):
         for object in self.objects:
             object.tick(self)
+            if not object.alive:
+                self.objects.remove(object)
     def render(self, screen):
         for object in self.objects:
-            texture = pygame.transform.rotate(object.texture, object.r)
+            texture = pygame.transform.rotate(object.texture, (object.r + 180) % 360)
             screen.blit(texture, (object.x * 64, object.y * 64))

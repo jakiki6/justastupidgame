@@ -26,6 +26,5 @@ class RickRoller(Mover):
     def onHit(self, tile, side):
         webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
         self.alive = False
-        return tile
 def get_tiles():
     return [Mover, RickRoller]
