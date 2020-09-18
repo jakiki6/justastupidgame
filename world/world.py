@@ -12,4 +12,5 @@ class World(object):
     def render(self, screen):
         for object in self.objects:
             texture = pygame.transform.rotate(object.texture, (object.r + 180) % 360)
-            screen.blit(texture, (object.x * 64, object.y * 64))
+            texture = pygame.transform.scale(texture, (32, 32))
+            screen.blit(texture, (object.x * 32, object.y * 32))
