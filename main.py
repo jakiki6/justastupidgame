@@ -11,25 +11,45 @@ for moddir in [f.path for f in os.scandir("mods") if f.is_dir()]:
     os.chdir(moddir)
     mod = __import__("mod")
     mod_tiles = __import__("tiles")
+    os.chdir("..")
+    os.chdir("..")
     for tile in mod_tiles.get_tiles():
+        tile.init(tile(0, 0, 0))
         tiles.append(tile)
-    os.chdir("..")
-    os.chdir("..")
-    del(sys.path[-1])
+    sys.apth = sys.path[:-1]
     print("Loaded from {}".format(moddir))
 
-world = World([tiles[1](0, 0, 90), tiles[0](5, 0, 270)])
+world = World()
 
 screen = pygame.display.set_mode((640, 480))
+
+r = 0
+t = 0
 
 while True:
     if ticks % 40 == 0:
         world.tick()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            pygame.display.quit()
+            pygame.quit()
             exit(0)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 4:
+                r = (r + 90) % 360
+            elif event.button == 5:
+                r = (r - 90) % 360
+            else:
+                world.objects.append(tiles[t](pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32, r))
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                t = (t + 1) % len(tiles)
     screen.fill((0, 0, 0))
     world.render(screen)
+    if 0 <= pygame.mouse.get_pos()[0] // 32 * 32 <= 640 and 0 <= pygame.mouse.get_pos()[1] // 32 * 32 <= 480:
+        texture = pygame.transform.rotate(tiles[t].texture, (r + 180) % 360)
+        texture.fill((255, 255, 255, 85), None, pygame.BLEND_RGBA_MULT)
+        screen.blit(texture, (pygame.mouse.get_pos()[0] // 32 * 32, pygame.mouse.get_pos()[1] // 32 * 32))
     pygame.display.flip()
     clock.tick(60)
     ticks += 1

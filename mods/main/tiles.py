@@ -6,10 +6,10 @@ import math
 with open("mod.json") as file:
     data = json.load(file)
     namespace = data["namespace"]
-    mod = data["mod"]
+    _mod = data["mod"]
 
 class Mover(Tile):
-    mod = mod
+    mod = _mod
     id = namespace + ":mover"
     texture_name = "tiles/mover.png"
     def tick(self, world):
@@ -20,7 +20,7 @@ class Mover(Tile):
         self.y += round(utils.getmy(self.r) * 1)
 
 class RickRoller(Mover):
-    mod = mod
+    mod = _mod
     id = namespace + ":rickroller"
     texture_name = "tiles/rickroller.png"
     def onHit(self, tile, side):
