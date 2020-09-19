@@ -1,0 +1,4 @@
+*.elf
+*.so
+*.pyc
+__pycache__/*
