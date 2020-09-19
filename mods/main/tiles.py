@@ -26,10 +26,10 @@ class RickRoller(Tile):
     id = namespace + ":rickroller"
     texture_name = "tiles/rickroller.png"
     def tick(self, world):
-        super().tick(world)
         self.t_x = self.x
         self.t_y = self.y 
         self.x, self.y = utils.move(self.x, self.y, self.r)
+        super().tick(world)
     def onOverlay(self, tile):
         if tile == self:
             return

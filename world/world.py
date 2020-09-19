@@ -11,6 +11,8 @@ class World(object):
                 self.objects.remove(object)
     def render(self, screen):
         for object in self.objects:
+            if not object.alive:
+                continue
             texture = pygame.transform.rotate(object.texture, (object.r + 180) % 360)
             screen.blit(texture, (object.x * 32, object.y * 32))
     def isColliding(self, x, y):
