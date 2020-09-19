@@ -13,3 +13,8 @@ class World(object):
         for object in self.objects:
             texture = pygame.transform.rotate(object.texture, (object.r + 180) % 360)
             screen.blit(texture, (object.x * 32, object.y * 32))
+    def isColliding(self, x, y):
+        for object in self.objects:
+            if object.x == x and object.y == y:
+                return True
+        return False

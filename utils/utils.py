@@ -12,3 +12,5 @@ def getmy(r):
     elif r == 180:
         return -1
     return 0
+def move(x, y, r):
+    return (round(x + getmx(r)), round(y + getmy(r)))

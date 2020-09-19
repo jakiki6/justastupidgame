@@ -16,8 +16,10 @@ class Mover(Tile):
         super().tick(world)
         self.t_x = self.x
         self.t_y = self.y
-        self.x += round(utils.getmx(self.r) * 1)
-        self.y += round(utils.getmy(self.r) * 1)
+        x, y = utils.move(self.x, self.y, self.r)
+        if not world.isColliding(x, y):
+            self.x = x
+            self.y = y
 
 class RickRoller(Mover):
     mod = _mod
