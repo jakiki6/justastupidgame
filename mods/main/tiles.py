@@ -28,6 +28,8 @@ class Mover(Tile):
                     break
                 elif "moveable" in obj2.tags:
                     obj.x, obj.y = utils.move(tx, ty, self.r)
+                else:
+                    obj.x, obj.y = utils.move(tx, ty, (self.r + 180) % 360)
             else:
                 break                       # @#! WHY WHHHHYYYYY
             tx, ty = utils.move(tx, ty, self.r)
