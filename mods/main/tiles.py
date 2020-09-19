@@ -17,6 +17,20 @@ class Mover(Tile):
         self.t_x = self.x
         self.t_y = self.y
         x, y = utils.move(self.x, self.y, self.r)
+        tx, ty = utils.move(self.x, self.y, self.r)
+        while world.exist(tx, ty):
+            obj = world.get(tx, ty)
+#            print(self.x, self.y, tx, ty, *utils.move(tx, ty, self.r))
+            if "moveable" in obj.tags:
+                obj2 = world.get(*utils.move(tx, ty, self.r))
+                if obj2 == None:
+                    obj.x, obj.y = utils.move(tx, ty, self.r)
+                    break
+                elif "moveable" in obj2.tags:
+                    obj.x, obj.y = utils.move(tx, ty, self.r)
+            else:
+                break                       # @#! WHY WHHHHYYYYY
+            tx, ty = utils.move(tx, ty, self.r)
         if not world.isColliding(x, y):
             self.x = x
             self.y = y
@@ -41,5 +55,11 @@ class SolidBlock(Tile):
     id = namespace + ":solidblock"
     texture_name = "tiles/solidblock.png"
 
+class MoveableBlock(Tile):
+    mod = _mod
+    id = namespace + ":moveableblock"
+    texture_name = "tiles/moveableblock.png"
+    tags = ["solid", "moveable"]
+
 def get_tiles():
-    return [Mover, RickRoller, SolidBlock]
+    return [Mover, RickRoller, SolidBlock, MoveableBlock]

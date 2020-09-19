@@ -9,13 +9,13 @@ class Tile(object):
     id = ""
     mod = ""
     texture_name = ""
-    solid = True
+    tags = ["solid"]
     def __init__(self, x: int, y: int, r: float):
         self.x, self.y, self.r = x, y, r
         self.t_x, self.t_y, self.t_r = x, y, r
         self.a_x, self.a_y, self.a_r = 0, 0, 0
         self.id = self.__class__.id
-        self.solid = self.__class__.solid
+        self.tags = self.__class__.tags
         self.alive = True
     def onHit(self, tile, side):
         pass # return modified tile
