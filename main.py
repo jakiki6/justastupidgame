@@ -25,9 +25,10 @@ screen = pygame.display.set_mode((640, 480))
 
 r = 0
 t = 0
+paused = False
 
 while True:
-    if ticks % 40 == 0:
+    if ticks % 40 == 0 and not paused:
         world.tick()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -35,7 +36,11 @@ while True:
             pygame.quit()
             exit(0)
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 4:
+            if event.button == 2:
+                t = (t + 1) % len(tiles)
+            elif event.button == 3:
+                world.kill(pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32)
+            elif event.button == 4:
                 r = (r + 90) % 360
             elif event.button == 5:
                 r = (r - 90) % 360
@@ -43,7 +48,9 @@ while True:
                 world.objects.append(tiles[t](pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32, r))
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                t = (t + 1) % len(tiles)
+                world.killAll()
+            elif event.key == pygame.K_ESCAPE:
+                paused = not paused
     screen.fill((0, 0, 0))
     world.render(screen)
     if 0 <= pygame.mouse.get_pos()[0] // 32 * 32 <= 640 and 0 <= pygame.mouse.get_pos()[1] // 32 * 32 <= 480:

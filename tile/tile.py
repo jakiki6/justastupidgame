@@ -51,3 +51,5 @@ class Tile(object):
             return -1
     def init(self):
         self.__class__.texture = pygame.image.load(os.path.join("mods", self.__class__.mod, self.__class__.texture_name))
+    def kill(self):
+        self.alive = False

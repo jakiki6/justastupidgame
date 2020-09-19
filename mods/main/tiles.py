@@ -21,12 +21,25 @@ class Mover(Tile):
             self.x = x
             self.y = y
 
-class RickRoller(Mover):
+class RickRoller(Tile):
     mod = _mod
     id = namespace + ":rickroller"
     texture_name = "tiles/rickroller.png"
-    def onHit(self, tile, side):
+    def tick(self, world):
+        super().tick(world)
+        self.t_x = self.x
+        self.t_y = self.y 
+        self.x, self.y = utils.move(self.x, self.y, self.r)
+    def onOverlay(self, tile):
+        if tile == self:
+            return
         webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-        self.alive = False
+        self.kill()
+
+class SolidBlock(Tile):
+    mod = _mod
+    id = namespace + ":solidblock"
+    texture_name = "tiles/solidblock.png"
+
 def get_tiles():
-    return [Mover, RickRoller]
+    return [Mover, RickRoller, SolidBlock]
