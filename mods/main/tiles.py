@@ -18,21 +18,25 @@ class Mover(Tile):
         self.t_y = self.y
         x, y = utils.move(self.x, self.y, self.r)
         tx, ty = utils.move(self.x, self.y, self.r)
+        sm = []
         while world.exist(tx, ty):
             obj = world.get(tx, ty)
 #            print(self.x, self.y, tx, ty, *utils.move(tx, ty, self.r))
             if "moveable" in obj.tags:
-                obj2 = world.get(*utils.move(tx, ty, self.r))
+                obj2 = world.get(*utils.move(obj.x, obj.y, self.r))
                 if obj2 == None:
-                    obj.x, obj.y = utils.move(tx, ty, self.r)
+                    sm.append(obj)
                     break
                 elif "moveable" in obj2.tags:
-                    obj.x, obj.y = utils.move(tx, ty, self.r)
+                    sm.append(obj)                    
                 else:
-                    obj.x, obj.y = utils.move(tx, ty, (self.r + 180) % 360)
+                    sm.clear()
+                    break
             else:
                 break                       # @#! WHY WHHHHYYYYY
             tx, ty = utils.move(tx, ty, self.r)
+        for o in sm:
+            o.x, o.y = utils.move(o.x, o.y, self.r)
         if not world.isColliding(x, y):
             self.x = x
             self.y = y
