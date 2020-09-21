@@ -1,3 +1,7 @@
+from watchdog.watchdog import Watchdog
+watchdog = Watchdog()
+watchdog.start()
+
 import pygame, os, sys, time
 from world.world import World
 
@@ -33,6 +37,7 @@ textures["paused"] = pygame.image.load("textures/paused.png")
 while True:
     if ticks % 40 == 0 and not paused:
         world.tick()
+        watchdog.tick()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.display.quit()

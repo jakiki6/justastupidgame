@@ -67,5 +67,15 @@ class MoveableBlock(Tile):
     texture_name = "tiles/moveableblock.png"
     tags = ["solid", "moveable"]
 
+class LevelFinish(Tile):
+    mod = _mod
+    id = namespace + ":levelfinish"
+    texture_name = "tiles/levelfinish.png"
+    def tick(self, world):
+        super().tick(world)
+        self.world = world
+    def onHit(self, tile, side):
+        self.world.objects.clear()
+
 def get_tiles():
-    return [Mover, RickRoller, SolidBlock, MoveableBlock]
+    return [Mover, RickRoller, SolidBlock, MoveableBlock, LevelFinish]
