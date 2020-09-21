@@ -27,6 +27,9 @@ r = 0
 t = 0
 paused = False
 
+textures = {}
+textures["paused"] = pygame.image.load("textures/paused.png")
+
 while True:
     if ticks % 40 == 0 and not paused:
         world.tick()
@@ -55,9 +58,11 @@ while True:
                 paused = not paused
     screen.fill((0, 0, 0))
     world.render(screen)
+    if paused:
+        screen.blit(textures["paused"], (0, 0))
     if 0 <= pygame.mouse.get_pos()[0] // 32 * 32 <= 640 and 0 <= pygame.mouse.get_pos()[1] // 32 * 32 <= 480:
         texture = pygame.transform.rotate(tiles[t].texture, (r + 180) % 360)
-        texture.fill((255, 255, 255, 85), None, pygame.BLEND_RGBA_MULT)
+        texture.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
         screen.blit(texture, (pygame.mouse.get_pos()[0] // 32 * 32, pygame.mouse.get_pos()[1] // 32 * 32))
     pygame.display.flip()
     clock.tick(60)
