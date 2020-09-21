@@ -45,6 +45,8 @@ while True:
             elif event.button == 5:
                 r = (r - 90) % 360
             else:
+                if world.exist(pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32):
+                    world.get(pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32).kill()
                 world.objects.append(tiles[t](pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32, r))
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
