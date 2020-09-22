@@ -1,4 +1,4 @@
-import threading, datetime, time
+import threading, datetime, time, sys
 
 class Watchdog(threading.Thread):
     def __init__(self):
@@ -11,7 +11,12 @@ class Watchdog(threading.Thread):
     def run(self):
         while True:
             while not self.tickflag:
-                time.sleep(0.01)
+                time.sleep(0.1)
+                self.lag = datetime.datetime.now() - self.starttime
+                if not threading.main_thread().is_alive():
+                    print("Main Thread exited!")
+                    sys.exit(0)
+            if self.lag > datetime.timedelta(0, 5):
+                print("Lag of:", self.lag)
             self.tickflag = False
-            self.lag = datetime.datetime.now() - self.starttime
             self.starttime = datetime.datetime.now()

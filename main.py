@@ -35,8 +35,9 @@ textures = {}
 textures["paused"] = pygame.image.load("textures/paused.png")
 
 while True:
-    if ticks % 40 == 0 and not paused:
-        world.tick()
+    if ticks % 40 == 0:
+        if not paused:
+            world.tick()
         watchdog.tick()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
