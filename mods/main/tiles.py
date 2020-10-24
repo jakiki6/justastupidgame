@@ -1,5 +1,5 @@
 import json, webbrowser
-from tile.tile import Tile
+from tile.tile import Tile, RotateableTile
 from utils import utils
 import math
 
@@ -8,7 +8,7 @@ with open("mod.json") as file:
     namespace = data["namespace"]
     _mod = data["mod"]
 
-class Mover(Tile):
+class Mover(RotateableTile):
     mod = _mod
     id = namespace + ":mover"
     texture_name = "tiles/mover.png"
@@ -41,11 +41,18 @@ class Mover(Tile):
             self.x = x
             self.y = y
 
-class RickRoller(Tile):
+class RickRoller(RotateableTile):
     mod = _mod
     id = namespace + ":rickroller"
     texture_name = "tiles/rickroller.png"
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._die = False
     def tick(self, world):
+        if self._die:
+            self.kill()
+            super().tick(world)
+            return
         self.t_x = self.x
         self.t_y = self.y 
         self.x, self.y = utils.move(self.x, self.y, self.r)
@@ -54,7 +61,7 @@ class RickRoller(Tile):
         if tile == self:
             return
         webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-        self.kill()
+        self._die = True
 
 class SolidBlock(Tile):
     mod = _mod

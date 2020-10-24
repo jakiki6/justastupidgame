@@ -4,6 +4,7 @@ watchdog.start()
 
 import pygame, os, sys, time
 from world.world import World
+import tile.tile as tile_types
 
 clock = pygame.time.Clock()
 ticks = 0
@@ -18,7 +19,7 @@ for moddir in [f.path for f in os.scandir("mods") if f.is_dir()]:
     os.chdir("..")
     os.chdir("..")
     for tile in mod_tiles.get_tiles():
-        tile.init(tile(0, 0, 0))
+        tile.init(tile)
         tiles.append(tile)
     sys.apth = sys.path[:-1]
     print("Loaded from {}".format(moddir))
@@ -56,7 +57,10 @@ while True:
             else:
                 if world.exist(pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32):
                     world.get(pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32).kill()
-                world.objects.append(tiles[t](pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32, r))
+                if "rotateable" in tiles[t].tags:
+                    world.objects.append(tiles[t](pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32, r))
+                else:
+                    world.objects.append(tiles[t](pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32))
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 world.killAll()
@@ -67,7 +71,10 @@ while True:
     if paused:
         screen.blit(textures["paused"], (0, 0))
     if 0 <= pygame.mouse.get_pos()[0] // 32 * 32 <= 640 and 0 <= pygame.mouse.get_pos()[1] // 32 * 32 <= 480:
-        texture = pygame.transform.rotate(tiles[t].texture, (r + 180) % 360)
+        instance = tiles[t].empty_instance(tiles[t])
+        if "rotateable" in instance.tags:
+            instance.r = r
+        texture = instance.get_texture().copy()
         texture.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
         screen.blit(texture, (pygame.mouse.get_pos()[0] // 32 * 32, pygame.mouse.get_pos()[1] // 32 * 32))
     pygame.display.flip()
