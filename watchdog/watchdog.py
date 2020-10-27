@@ -17,6 +17,6 @@ class Watchdog(threading.Thread):
                     print("Main Thread exited!")
                     sys.exit(0)
             if self.lag > datetime.timedelta(0, 5):
-                print("Lag of:", self.lag)
+                print("Lag of:", self.lag, end="\r")
             self.tickflag = False
             self.starttime = datetime.datetime.now()

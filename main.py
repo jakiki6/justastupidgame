@@ -6,6 +6,7 @@ import pygame, os, sys, time
 from world.world import World
 import tile.tile as tile_types
 
+
 clock = pygame.time.Clock()
 ticks = 0
 
@@ -25,6 +26,8 @@ for moddir in [f.path for f in os.scandir("mods") if f.is_dir()]:
     print("Loaded from {}".format(moddir))
 
 world = World()
+from utils.dp import *
+
 
 screen = pygame.display.set_mode((640, 480))
 
@@ -35,8 +38,11 @@ paused = False
 textures = {}
 textures["paused"] = pygame.image.load("textures/paused.png")
 
+mov = [0, 0]
+mov_speed = 5
+
 while True:
-    if ticks % 40 == 0:
+    if ticks % 15 == 0:
         if not paused:
             world.tick()
         watchdog.tick()
@@ -49,23 +55,40 @@ while True:
             if event.button == 2:
                 t = (t + 1) % len(tiles)
             elif event.button == 3:
-                world.kill(pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32)
+                world.kill(*get_pos_xy())
             elif event.button == 4:
                 r = (r + 90) % 360
             elif event.button == 5:
                 r = (r - 90) % 360
             else:
-                if world.exist(pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32):
-                    world.get(pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32).kill()
+                if world.exist(*get_pos_xy()):
+                    world.get(*get_pos_xy()).kill()
                 if "rotateable" in tiles[t].tags:
-                    world.objects.append(tiles[t](pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32, r))
+                    world.objects.append(tiles[t](*get_pos_xy(), r))
                 else:
-                    world.objects.append(tiles[t](pygame.mouse.get_pos()[0] // 32, pygame.mouse.get_pos()[1] // 32))
+                    world.objects.append(tiles[t](*get_pos_xy()))
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 world.killAll()
             elif event.key == pygame.K_ESCAPE:
                 paused = not paused
+            elif event.key == pygame.K_w:
+                mov[1] = -mov_speed
+            elif event.key == pygame.K_s:
+                mov[1] = mov_speed
+            elif event.key == pygame.K_a:
+                mov[0] = -mov_speed
+            elif event.key == pygame.K_d:
+                mov[0] = mov_speed
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_w or event.key == pygame.K_s:
+                mov[1] = 0
+            elif event.key == pygame.K_a or event.key == pygame.K_d:
+                mov[0] = 0
+
+    world.dx += mov[0]
+    world.dy += mov[1]
+
     screen.fill((0, 0, 0))
     world.render(screen)
     if paused:
@@ -76,7 +99,7 @@ while True:
             instance.r = r
         texture = instance.get_texture().copy()
         texture.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
-        screen.blit(texture, (pygame.mouse.get_pos()[0] // 32 * 32, pygame.mouse.get_pos()[1] // 32 * 32))
+        screen.blit(texture, (get_pos_x() * 32 - world.dx, get_pos_y() * 32 - world.dy))
     pygame.display.flip()
     clock.tick(60)
     ticks += 1

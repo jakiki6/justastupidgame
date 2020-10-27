@@ -82,7 +82,10 @@ class LevelFinish(Tile):
         super().tick(world)
         self.world = world
     def onHit(self, tile, side):
-        self.world.objects.clear()
+        try:
+            self.world.objects.clear()
+        except:
+            pass
 
 def get_tiles():
     return [Mover, RickRoller, SolidBlock, MoveableBlock, LevelFinish]

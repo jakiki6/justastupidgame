@@ -2,8 +2,9 @@ from utils import utils
 import pygame
 
 class World(object):
-    def __init__(self, objects=[]):
+    def __init__(self, objects=[], dx=0, dy=0):
         self.objects = objects
+        self.dx, self.dy = dx, dy
     def tick(self):
         for object in self.objects:
             object.tick(self)
@@ -14,7 +15,7 @@ class World(object):
             if not object.alive:
                 continue
             texture = object.get_texture()
-            screen.blit(texture, (object.x * 32, object.y * 32))
+            screen.blit(texture, (object.x * 32 - self.dx, object.y * 32 - self.dy))
     def isColliding(self, x, y):
         for object in self.objects:
             if object.x == x and object.y == y and "solid" in object.tags:
