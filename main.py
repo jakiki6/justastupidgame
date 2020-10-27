@@ -90,6 +90,14 @@ while True:
     world.dy += mov[1]
 
     screen.fill((0, 0, 0))
+
+    dx, dy = get_dp_x(), get_dp_y()
+
+    for x in range(0, 700, 32):
+        pygame.draw.line(screen, (25, 25, 25), (x - dx, 0), (x - dx, 480), 1)
+    for y in range(0, 500, 32):
+        pygame.draw.line(screen, (25, 25, 25), (0, y - dy), (640, y - dy), 1)
+
     world.render(screen)
     if paused:
         screen.blit(textures["paused"], (0, 0))
