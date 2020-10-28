@@ -10,6 +10,9 @@ import tile.tile as tile_types
 clock = pygame.time.Clock()
 ticks = 0
 
+pygame.font.init()
+font = pygame.font.SysFont('Roboto', 16)
+
 tiles = []
 
 for moddir in [f.path for f in os.scandir("mods") if f.is_dir()]:
@@ -41,6 +44,8 @@ textures["paused"] = pygame.image.load("textures/paused.png")
 mov = [0, 0]
 mov_speed = 5
 
+mbd = [False, False]
+
 while True:
     if ticks % 15 == 0:
         if not paused:
@@ -55,18 +60,18 @@ while True:
             if event.button == 2:
                 t = (t + 1) % len(tiles)
             elif event.button == 3:
-                world.kill(*get_pos_xy())
+                mbd[1] = True
             elif event.button == 4:
                 r = (r + 90) % 360
             elif event.button == 5:
                 r = (r - 90) % 360
             else:
-                if world.exist(*get_pos_xy()):
-                    world.get(*get_pos_xy()).kill()
-                if "rotateable" in tiles[t].tags:
-                    world.objects.append(tiles[t](*get_pos_xy(), r))
-                else:
-                    world.objects.append(tiles[t](*get_pos_xy()))
+                mbd[0] = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1 or event.button > 5:
+                mbd[0] = False
+            elif event.button == 3:
+                mbd[1] = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 world.killAll()
@@ -85,6 +90,16 @@ while True:
                 mov[1] = 0
             elif event.key == pygame.K_a or event.key == pygame.K_d:
                 mov[0] = 0
+
+    if mbd[0]:
+        if world.exist(*get_pos_xy()):
+            world.get(*get_pos_xy()).kill()
+        if "rotateable" in tiles[t].tags:
+            world.objects.append(tiles[t](*get_pos_xy(), r))
+        else:
+            world.objects.append(tiles[t](*get_pos_xy()))
+    if mbd[1]:
+        world.kill(*get_pos_xy())
 
     world.dx += mov[0]
     world.dy += mov[1]
@@ -108,6 +123,10 @@ while True:
         texture = instance.get_texture().copy()
         texture.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
         screen.blit(texture, (get_pos_x() * 32 - world.dx, get_pos_y() * 32 - world.dy))
+
+    screen.blit(font.render(f"{clock.get_fps() * 10 // 1 / 10}", True, (255, 255, 255)), (0, 18))
+    screen.blit(font.render(f"{world.dx // 32} {world.dy // 32}", True, (255, 255, 255)), (0, 18 + 16))
+
     pygame.display.flip()
     clock.tick(60)
     ticks += 1
