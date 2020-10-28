@@ -19,7 +19,7 @@ class Tile(object):
         self.textures = self.__class__.textures
         self.alive = True
     def onHit(self, tile, side):
-        pass # return modified tile
+        pass
     def onOverlay(self, tile):
         pass
     def tick(self, world):

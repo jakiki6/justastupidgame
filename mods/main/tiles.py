@@ -1,7 +1,7 @@
 import json, webbrowser
 from tile.tile import Tile, RotateableTile
 from utils import utils
-import math
+import math, pygame, os
 
 with open("mod.json") as file:
     data = json.load(file)
@@ -72,7 +72,7 @@ class MoveableBlock(Tile):
     mod = _mod
     id = namespace + ":moveableblock"
     texture_name = "tiles/moveableblock.png"
-    tags = ["solid", "moveable"]
+    tags = ["moveable", "solid"]
 
 class LevelFinish(Tile):
     mod = _mod
@@ -87,5 +87,37 @@ class LevelFinish(Tile):
         except:
             pass
 
+class Rotater(Tile):
+    tags = RotateableTile.tags
+
+    mod = _mod
+    id = namespace + ":rotater"
+    texture_name = "tiles/rotater.png"
+
+    textures = [pygame.surface.Surface((32, 32)) for _ in range(0, 2)]
+    def __init__(self, x: int, y: int, r: float):
+        super().__init__(x, y)
+        self.r = r  
+        texture = pygame.image.load(os.path.join("mods", self.__class__.mod, self.__class__.texture_name))
+        self.textures[0] = texture.copy()
+        self.textures[1] = pygame.transform.flip(texture, True, False)
+
+    def onHit(self, tile, side):
+        if side % 2:
+            return
+        if not "rotateable" in tile.tags:
+            return
+        if tile.id == self.id:
+            return
+        if self.r // 180:
+            tile.r = (tile.r + 90) % 360
+        else:
+            tile.r = (tile.r - 90) % 360
+
+    def get_texture(self):
+        return self.textures[self.r // 180 > 0]
+    def empty_instance(cl):
+        return cl(0, 0, 0)
+
 def get_tiles():
-    return [Mover, RickRoller, SolidBlock, MoveableBlock, LevelFinish]
+    return [Mover, RickRoller, SolidBlock, MoveableBlock, LevelFinish, Rotater]
