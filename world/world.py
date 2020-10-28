@@ -7,7 +7,10 @@ class World(object):
         self.dx, self.dy = dx, dy
     def tick(self):
         for object in self.objects:
-            object.tick(self)
+            if object.should_tick:
+                object.tick(self)
+            else:
+                object.should_tick = True
             if not object.alive:
                 self.objects.remove(object)
     def render(self, screen):

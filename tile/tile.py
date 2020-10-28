@@ -18,6 +18,7 @@ class Tile(object):
         self.tags = self.__class__.tags
         self.textures = self.__class__.textures
         self.alive = True
+        self.should_tick = True
     def onHit(self, tile, side):
         pass
     def onOverlay(self, tile):

@@ -131,6 +131,7 @@ class Cloner(RotateableTile):
             obj = world.get(bx, by)
             obj2 = obj.copy()
             obj2.x, obj2.y = tx, ty
+            obj2.should_tick = False
             world.objects.append(obj2)
 
 def get_tiles():
