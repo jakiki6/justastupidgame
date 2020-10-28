@@ -1,4 +1,4 @@
-import pygame, os
+import pygame, os, copy
 
 class Tile(object):
     '''
@@ -58,6 +58,8 @@ class Tile(object):
         return self.textures[0]
     def empty_instance(cl):
         return cl(0, 0)
+    def copy(self):
+        return self.__class__(self.x, self.y)
 
 class RotateableTile(Tile):
     texture_path = ""
@@ -72,3 +74,5 @@ class RotateableTile(Tile):
         return self.textures[self.r // 90]
     def empty_instance(cl):
         return cl(0, 0, 0)
+    def copy(self):
+        return self.__class__(self.x, self.y, self.r)

@@ -119,5 +119,19 @@ class Rotater(Tile):
     def empty_instance(cl):
         return cl(0, 0, 0)
 
+class Cloner(RotateableTile):
+    mod = _mod
+    id = namespace + ":cloner"
+    texture_name = "tiles/cloner.png"
+    def tick(self, world):
+        super().tick(world)
+        bx, by = utils.move(self.x, self.y, (self.r - 180) % 360)
+        tx, ty = utils.move(self.x, self.y, self.r)
+        if world.exist(bx, by) and not world.exist(tx, ty):
+            obj = world.get(bx, by)
+            obj2 = obj.copy()
+            obj2.x, obj2.y = tx, ty
+            world.objects.append(obj2)
+
 def get_tiles():
-    return [Mover, RickRoller, SolidBlock, MoveableBlock, LevelFinish, Rotater]
+    return [Mover, RickRoller, SolidBlock, MoveableBlock, LevelFinish, Rotater, Cloner]
