@@ -123,6 +123,9 @@ class Cloner(RotateableTile):
     mod = _mod
     id = namespace + ":cloner"
     texture_name = "tiles/cloner.png"
+
+    tags = RotateableTile.tags + ["moveable"]
+
     def tick(self, world):
         super().tick(world)
         bx, by = utils.move(self.x, self.y, (self.r - 180) % 360)

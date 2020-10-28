@@ -45,6 +45,7 @@ mov = [0, 0]
 mov_speed = 5
 
 mbd = [False, False]
+mto = 0
 
 while True:
     if ticks % 15 == 0:
@@ -61,12 +62,14 @@ while True:
                 t = (t + 1) % len(tiles)
             elif event.button == 3:
                 mbd[1] = True
+                mto = -1
             elif event.button == 4:
                 r = (r + 90) % 360
             elif event.button == 5:
                 r = (r - 90) % 360
             else:
                 mbd[0] = True
+                mto = -1
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1 or event.button > 5:
                 mbd[0] = False
@@ -91,15 +94,19 @@ while True:
             elif event.key == pygame.K_a or event.key == pygame.K_d:
                 mov[0] = 0
 
-    if mbd[0]:
-        if world.exist(*get_pos_xy()):
-            world.get(*get_pos_xy()).kill()
+    if mbd[0] and mto <= 0:
+        world.get(*get_pos_xy()).kill()
         if "rotateable" in tiles[t].tags:
             world.objects.append(tiles[t](*get_pos_xy(), r))
         else:
             world.objects.append(tiles[t](*get_pos_xy()))
-    if mbd[1]:
+    if mbd[1] and mto <= 0:
         world.kill(*get_pos_xy())
+
+    if mto == -1:
+        mto = 20
+    elif mto > 0:
+        mto -= 1
 
     world.dx += mov[0]
     world.dy += mov[1]
