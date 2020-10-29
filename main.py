@@ -95,13 +95,13 @@ while True:
                 mov[0] = 0
 
     if mbd[0] and mto <= 0:
-        world.get(*get_pos_xy()).kill()
+        world.kill_at(*get_pos_xy())
         if "rotateable" in tiles[t].tags:
             world.objects.append(tiles[t](*get_pos_xy(), r))
         else:
             world.objects.append(tiles[t](*get_pos_xy()))
     if mbd[1] and mto <= 0:
-        world.kill(*get_pos_xy())
+        world.kill_at(*get_pos_xy())
 
     if mto == -1:
         mto = 20

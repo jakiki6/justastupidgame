@@ -40,3 +40,7 @@ class World(object):
             if object.x == x and object.y == y:
                 return object
         return None
+    def kill_at(self, x, y):
+        obj = self.get(x, y)
+        if obj != None:
+            obj.kill()
