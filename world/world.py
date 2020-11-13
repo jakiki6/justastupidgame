@@ -6,6 +6,7 @@ class World(object):
         self.objects = objects
         self.dx, self.dy = dx, dy
     def tick(self):
+        self.sort()
         for object in self.objects:
             if object.should_tick:
                 object.tick(self)
@@ -44,3 +45,15 @@ class World(object):
         obj = self.get(x, y)
         if obj != None:
             obj.kill()
+    def sort(self):
+        mapping = {}
+        objs = []
+        for object in self.objects:
+            if not object.x in mapping.keys():
+                mapping[object.x] = []
+            mapping[object.x].append(object)
+        map = sorted(mapping.items(), key=lambda o: o[0])
+        for row in map:
+            r = sorted(row[1], key=lambda o: o.y)
+            objs += r
+        self.objects = objs.copy()
