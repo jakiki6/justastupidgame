@@ -1,6 +1,3 @@
-from watchdog.watchdog import Watchdog
-watchdog = Watchdog()
-watchdog.start()
 
 state = {}
 state["paused"] = False
@@ -35,6 +32,10 @@ renderThread = threading.Thread(target=render_run, daemon=True)
 
 tickingThread.start()
 renderThread.start()
+
+from watchdog.watchdog import Watchdog
+watchdog = Watchdog([tickingThread, renderThread])
+watchdog.start()
 
 while True:
     time.sleep(1)

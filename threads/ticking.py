@@ -13,6 +13,5 @@ def run():
             continue
         if ticks % 15 == 0:
             world.tick()
-        watchdog.tick()
         ticks += 1
         clock.tick(60)
