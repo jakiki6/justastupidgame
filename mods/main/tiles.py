@@ -12,6 +12,7 @@ class Mover(RotateableTile):
     mod = _mod
     id = namespace + ":mover"
     texture_name = "tiles/mover.png"
+    tags = RotateableTile.tags + ["moveable"]
     def tick(self, world):
         super().tick(world)
         self.t_x = self.x
@@ -22,7 +23,7 @@ class Mover(RotateableTile):
         while world.exist(tx, ty):
             obj = world.get(tx, ty)
 #            print(self.x, self.y, tx, ty, *utils.move(tx, ty, self.r))
-            if "moveable" in obj.tags:
+            if "moveable" in obj.tags:# and not isinstance(obj, Mover):
                 obj2 = world.get(*utils.move(obj.x, obj.y, self.r))
                 if obj2 == None:
                     sm.append(obj)

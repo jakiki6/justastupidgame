@@ -1,4 +1,4 @@
-import threading, datetime, time, sys, os
+import threading, datetime, time, sys, os, gc
 
 class Watchdog(threading.Thread):
     def __init__(self):
@@ -16,6 +16,7 @@ class Watchdog(threading.Thread):
                 if not threading.main_thread().is_alive():
                     print("Main Thread exited!")
                     sys.exit(0)
+            gc.collect()
             if self.lag > datetime.timedelta(0, 5):
                 print("Lag of:", self.lag, end="\r")
             if self.lag > datetime.timedelta(0, 8):
