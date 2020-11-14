@@ -1,6 +1,7 @@
 
 state = {}
 state["paused"] = False
+state["cleaning"] = False
 
 import os, sys, threading, time
 from world.world import World

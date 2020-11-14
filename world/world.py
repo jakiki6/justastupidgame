@@ -48,6 +48,7 @@ class World(object):
         for object in self.objects:
             if object.x == x and object.y == y:
                 object.kill()
+                self.objects.remove(object)
     def sort(self):
         mapping = {}
         objs = []

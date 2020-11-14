@@ -16,8 +16,11 @@ def run():
     r = 0
     t = 0
 
+    csize = 5
+
     textures = {}
     textures["paused"] = pygame.image.load("textures/paused.png")
+    textures["cleaning"] = pygame.image.load("textures/locked.png")
 
     mov = [0, 0]
     mov_speed = 5
@@ -51,9 +54,7 @@ def run():
                     mbd[1] = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    while world.lock:
-                        time.sleep(0.1)
-                    world.killAll()
+                    state["cleaning"] = True
                 elif event.key == pygame.K_ESCAPE:
                     state["paused"] = not state["paused"]
                 elif event.key == pygame.K_w:
@@ -64,6 +65,13 @@ def run():
                     mov[0] = -mov_speed
                 elif event.key == pygame.K_d:
                     mov[0] = mov_speed
+                elif event.key == pygame.K_c:
+                    for x in range(get_pos_x() - csize, get_pos_x() + csize):
+                        for y in range(get_pos_y() - csize, get_pos_y() + csize):
+                            if "rotateable" in tiles[t].tags:
+                                world.objects.append(tiles[t](x, y, r))
+                            else:
+                                world.objects.append(tiles[t](x, y))
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_w or event.key == pygame.K_s:
                     mov[1] = 0
@@ -107,8 +115,17 @@ def run():
             texture.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
             screen.blit(texture, (get_pos_x() * 32 - world.dx, get_pos_y() * 32 - world.dy))
 
-        screen.blit(font.render(f"{clock.get_fps() * 10 // 1 / 10}", True, (255, 255, 255)), (0, 18))
-        screen.blit(font.render(f"{world.dx // 32} {world.dy // 32}", True, (255, 255, 255)), (0, 18 + 16))
+        screen.blit(font.render(f"FPS: {clock.get_fps() * 10 // 1 / 10}", True, (255, 255, 255)), (0, 18))
+        screen.blit(font.render(f"Pos: {world.dx // 32} {world.dy // 32}", True, (255, 255, 255)), (0, 18 + 16))
+        screen.blit(font.render(f"Tiles: {len(world.objects)}", True, (255, 255, 255)), (0, 18 + 32))
+
+        if state["cleaning"]:
+            screen.blit(textures["cleaning"], (0, 0))
+            pygame.display.flip()
+            while world.lock:
+                time.sleep(0.1)
+            world.killAll()
+            state["cleaning"] = False
 
         pygame.display.flip()
         clock.tick(60)
