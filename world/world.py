@@ -5,7 +5,9 @@ class World(object):
     def __init__(self, objects=[], dx=0, dy=0):
         self.objects = objects
         self.dx, self.dy = dx, dy
+        self.lock = False
     def tick(self):
+        self.lock = True
         self.sort()
         for object in self.objects:
             if object.should_tick:
@@ -14,6 +16,7 @@ class World(object):
                 object.should_tick = True
             if not object.alive:
                 self.objects.remove(object)
+        self.lock = False
     def render(self, screen):
         for object in self.objects:
             if not object.alive:
@@ -42,9 +45,9 @@ class World(object):
                 return object
         return None
     def kill_at(self, x, y):
-        obj = self.get(x, y)
-        if obj != None:
-            obj.kill()
+        for object in self.objects:
+            if object.x == x and object.y == y:
+                object.kill()
     def sort(self):
         mapping = {}
         objs = []

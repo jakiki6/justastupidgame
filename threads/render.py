@@ -51,6 +51,8 @@ def run():
                     mbd[1] = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
+                    while world.lock:
+                        time.sleep(0.1)
                     world.killAll()
                 elif event.key == pygame.K_ESCAPE:
                     state["paused"] = not state["paused"]
