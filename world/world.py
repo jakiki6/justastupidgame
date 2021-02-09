@@ -16,6 +16,8 @@ class World(object):
                 object.should_tick = True
             if not object.alive:
                 self.objects.remove(object)
+        for object in self.objects:
+            object.apply()
         self.lock = False
     def render(self, screen):
         for object in self.objects:

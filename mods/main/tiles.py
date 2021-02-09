@@ -17,30 +17,41 @@ class Mover(RotateableTile):
         super().tick(world)
         self.t_x = self.x
         self.t_y = self.y
-        x, y = utils.move(self.x, self.y, self.r)
-        tx, ty = utils.move(self.x, self.y, self.r)
+
+        cm, sm = Mover.can_move(self.x, self.y, self.r, world)
+        if not cm:
+            return
+                
+        for o in sm:
+            o.update_queue["x"], o.update_queue["y"] = utils.move(o.x, o.y, self.r)
+        self.update_queue["x"], self.update_queue["y"] = utils.move(self.x, self.y, self.r)
+
+    def can_move(_x, _y, _r, world):
+        x, y = utils.move(_x, _y, _r)
+        tx, ty = utils.move(_x, _y, _r)
         sm = []
         while world.exist(tx, ty):
-            obj = world.get(tx, ty)
-#            print(self.x, self.y, tx, ty, *utils.move(tx, ty, self.r))
-            if "moveable" in obj.tags:# and not isinstance(obj, Mover):
-                obj2 = world.get(*utils.move(obj.x, obj.y, self.r))
+            obj = world.get(tx, ty)  
+            if "moveable" in obj.tags:
+                obj2 = world.get(*utils.move(obj.x, obj.y, _r))
+                if (isinstance(obj2, Mover)):
+                    if obj2.r == _r:
+                        c, m = Mover.can_move(obj2.x, obj2.y, obj2.r, world)
+                        if not c:
+                            return False, []
+                        sm += m
+                        return True, sm
                 if obj2 == None:
                     sm.append(obj)
-                    break
+                    return True, sm
                 elif "moveable" in obj2.tags:
-                    sm.append(obj)                    
+                    sm.append(obj)
                 else:
-                    sm.clear()
-                    break
+                    return False, []
             else:
-                break                       # @#! WHY WHHHHYYYYY
-            tx, ty = utils.move(tx, ty, self.r)
-        for o in sm:
-            o.x, o.y = utils.move(o.x, o.y, self.r)
-        if not world.isColliding(x, y):
-            self.x = x
-            self.y = y
+                return False, []
+            tx, ty = utils.move(tx, ty, _r)
+        return True, sm
 
 class RickRoller(RotateableTile):
     mod = _mod
@@ -55,8 +66,8 @@ class RickRoller(RotateableTile):
             super().tick(world)
             return
         self.t_x = self.x
-        self.t_y = self.y 
-        self.x, self.y = utils.move(self.x, self.y, self.r)
+        self.t_y = self.y
+        self.update_queue["x"], self.update_queue["y"] = utils.move(self.x, self.y, self.r)
         super().tick(world)
     def onOverlay(self, tile):
         if tile == self:
@@ -111,9 +122,9 @@ class Rotater(Tile):
         if tile.id == self.id:
             return
         if self.r // 180:
-            tile.r = (tile.r + 90) % 360
+            tile.update_queue["r"] = (tile.r + 90) % 360
         else:
-            tile.r = (tile.r - 90) % 360
+            tile.update_queue["r"] = (tile.r - 90) % 360
 
     def get_texture(self):
         return self.textures[self.r // 180 > 0]

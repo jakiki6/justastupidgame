@@ -19,6 +19,7 @@ class Tile(object):
         self.textures = self.__class__.textures
         self.alive = True
         self.should_tick = True
+        self.update_queue = {}
     def onHit(self, tile, side):
         pass
     def onOverlay(self, tile):
@@ -32,6 +33,10 @@ class Tile(object):
                             self.onOverlay(obj)
                         else:
                             self.onHit(obj, self.getSide(x, y))
+    def apply(self):
+        for key, val in self.update_queue.items():
+            setattr(self, key, val)
+        self.update_queue.clear()
     def getSide(self, x, y):
         if x == self.x and y == self.y - 1:
             return 0
