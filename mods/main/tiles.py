@@ -33,7 +33,11 @@ class Mover(RotateableTile):
         while world.exist(tx, ty):
             obj = world.get(tx, ty)  
             if isinstance(obj, AxisMovableBlock):
-                if obj.r != _r % 180:
+                if obj.r == 0 and (_r == 0 or _r == 180):
+                    pass
+                elif obj.r == 180 and (_r == 90 or _r == 270):
+                    pass
+                else:
                     return False, []
             if "movable" in obj.tags:
                 obj2 = world.get(*utils.move(obj.x, obj.y, _r))
@@ -87,7 +91,7 @@ class MoveableBlock(Tile):
     mod = _mod
     id = namespace + ":moveableblock"
     texture_name = "tiles/moveableblock.png"
-    tags = ["moveable", "solid"]
+    tags = ["movable", "solid"]
 
 class LevelFinish(Tile):
     mod = _mod
@@ -162,12 +166,14 @@ class AxisMovableBlock(Tile):
     def __init__(self, x, y, r):
         super().__init__(x, y)
         self.r = r
+        if self.r == 270:
+            self.r = 180
+        if self.r == 90:
+            self.r = 0
         self.textures = [None, None]
         texture = pygame.image.load(os.path.join("mods", self.__class__.mod, self.__class__.texture_name))
         self.textures[0] = texture.copy()
         self.textures[1] = pygame.transform.rotate(texture, 90)
-
-
     def get_texture(self):
         return self.textures[self.r // 180 > 0]
     def empty_instance(cl):
