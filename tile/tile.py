@@ -69,7 +69,7 @@ class Tile(object):
 
 class RotateableTile(Tile):
     texture_path = ""
-    tags = Tile.tags + ["rotateable"]
+    tags = Tile.tags + ["rotatable"]
     def __init__(self, x: int, y: int, r: float):
         super().__init__(x, y)
         self.r = r

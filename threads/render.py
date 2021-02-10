@@ -68,10 +68,14 @@ def run():
                 elif event.key == pygame.K_c:
                     for x in range(get_pos_x() - csize, get_pos_x() + csize):
                         for y in range(get_pos_y() - csize, get_pos_y() + csize):
-                            if "rotateable" in tiles[t].tags:
+                            if "rotatable" in tiles[t].tags:
                                 world.objects.append(tiles[t](x, y, r))
                             else:
                                 world.objects.append(tiles[t](x, y))
+                elif event.key == pygame.K_n:
+                    t = (t - 1) % len(tiles)
+                elif event.key == pygame.K_m:
+                    t = (t + 1) % len(tiles)
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_w or event.key == pygame.K_s:
                     mov[1] = 0
@@ -80,7 +84,7 @@ def run():
 
         if mbd[0] and mto <= 0:
             world.kill_at(*get_pos_xy())
-            if "rotateable" in tiles[t].tags:
+            if "rotatable" in tiles[t].tags:
                 world.objects.append(tiles[t](*get_pos_xy(), r))
             else:
                 world.objects.append(tiles[t](*get_pos_xy()))
@@ -109,7 +113,7 @@ def run():
             screen.blit(textures["paused"], (0, 0))
         if 0 <= pygame.mouse.get_pos()[0] // 32 * 32 <= 640 and 0 <= pygame.mouse.get_pos()[1] // 32 * 32 <= 480:
             instance = tiles[t].empty_instance(tiles[t])
-            if "rotateable" in instance.tags:
+            if "rotatable" in instance.tags:
                 instance.r = r
             texture = instance.get_texture().copy()
             texture.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)

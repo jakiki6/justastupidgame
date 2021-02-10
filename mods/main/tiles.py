@@ -12,7 +12,7 @@ class Mover(RotateableTile):
     mod = _mod
     id = namespace + ":mover"
     texture_name = "tiles/mover.png"
-    tags = RotateableTile.tags + ["moveable"]
+    tags = RotateableTile.tags + ["movable"]
     def tick(self, world):
         super().tick(world)
         self.t_x = self.x
@@ -32,7 +32,10 @@ class Mover(RotateableTile):
         sm = []
         while world.exist(tx, ty):
             obj = world.get(tx, ty)  
-            if "moveable" in obj.tags:
+            if isinstance(obj, AxisMovableBlock):
+                if obj.r != _r % 180:
+                    return False, []
+            if "movable" in obj.tags:
                 obj2 = world.get(*utils.move(obj.x, obj.y, _r))
                 if (isinstance(obj2, Mover)):
                     if obj2.r == _r:
@@ -44,7 +47,7 @@ class Mover(RotateableTile):
                 if obj2 == None:
                     sm.append(obj)
                     return True, sm
-                elif "moveable" in obj2.tags:
+                elif "movable" in obj2.tags:
                     sm.append(obj)
                 else:
                     return False, []
@@ -109,7 +112,7 @@ class Rotater(Tile):
     textures = [pygame.surface.Surface((32, 32)) for _ in range(0, 2)]
     def __init__(self, x: int, y: int, r: float):
         super().__init__(x, y)
-        self.r = r  
+        self.r = r
         texture = pygame.image.load(os.path.join("mods", self.__class__.mod, self.__class__.texture_name))
         self.textures[0] = texture.copy()
         self.textures[1] = pygame.transform.flip(texture, True, False)
@@ -117,7 +120,7 @@ class Rotater(Tile):
     def onHit(self, tile, side):
         if side % 2:
             return
-        if not "rotateable" in tile.tags:
+        if not "rotatable" in tile.tags:
             return
         if tile.id == self.id:
             return
@@ -136,7 +139,7 @@ class Cloner(RotateableTile):
     id = namespace + ":cloner"
     texture_name = "tiles/cloner.png"
 
-    tags = RotateableTile.tags + ["moveable"]
+    tags = RotateableTile.tags + ["movable"]
 
     def tick(self, world):
         super().tick(world)
@@ -149,5 +152,26 @@ class Cloner(RotateableTile):
             obj2.should_tick = False
             world.objects.append(obj2)
 
+class AxisMovableBlock(Tile):
+    mod = _mod
+    id = namespace + ":axismovableblock"
+    texture_name = "tiles/axismovableblock.png"
+
+    tags = RotateableTile.tags + ["movable"]
+
+    def __init__(self, x, y, r):
+        super().__init__(x, y)
+        self.r = r
+        self.textures = [None, None]
+        texture = pygame.image.load(os.path.join("mods", self.__class__.mod, self.__class__.texture_name))
+        self.textures[0] = texture.copy()
+        self.textures[1] = pygame.transform.rotate(texture, 90)
+
+
+    def get_texture(self):
+        return self.textures[self.r // 180 > 0]
+    def empty_instance(cl):
+        return cl(0, 0, 0)
+
 def get_tiles():
-    return [Mover, RickRoller, SolidBlock, MoveableBlock, LevelFinish, Rotater, Cloner]
+    return [Mover, RickRoller, SolidBlock, MoveableBlock, LevelFinish, Rotater, Cloner, AxisMovableBlock]
