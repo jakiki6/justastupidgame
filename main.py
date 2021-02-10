@@ -1,3 +1,7 @@
+#!/bin/env python3
+
+import os
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 state = {}
 state["paused"] = False
