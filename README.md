@@ -1,4 +1,4 @@
 # justastupidgame
 Ignore this for now
 
-I'm to lazy to make a fancy readme
+I'm too lazy to make a fancy readme
